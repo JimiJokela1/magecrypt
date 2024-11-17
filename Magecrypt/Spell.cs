@@ -1,9 +1,18 @@
-﻿namespace Magecrypt;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Magecrypt;
 
 public class Spell
 {
     public string Name { get; protected set; }
     public int ManaCost { get; protected set; }
+    
+    public Spell(string name, int manaCost)
+    {
+        Name = name;
+        ManaCost = manaCost;
+    }
 
     public virtual bool Cast(Player player, Point targetPoint)
     {
@@ -22,38 +31,56 @@ public class Spell
     }
 }
 
-public class Fireball : Spell
+public class DirectDamageSpell : Spell
 {
-    public Fireball() : base()
+    public DirectDamageSpell(string name, int manaCost, int damage) : base(name, manaCost)
     {
-        Name = "Fireball";
-        ManaCost = 5;
+        Damage = damage;
     }
+
+    public int Damage { get; private set; }
 
     public override bool Cast(Player player, Point targetPoint)
     {
         if (base.Cast(player, targetPoint))
         {
-            // Do fireball stuff
+            List<GameObject> characters = new List<GameObject>(Map.Instance.MapObjectsByPosition[targetPoint.X, targetPoint.Y].Where(x => x is Character));
+            characters.ForEach(obj =>
+            {
+                if (obj is Character character)
+                {
+                    character.TakeDamage(Damage, player);
+                    RootScreen.Instance.ShowMessage($"{player.Id} hits {character.Id} with {Name} for {Damage} damage!");
+                }
+            });
             return true;
         }
         return false;
     }
 }
 
-public class Heal : Spell
+public class HealSpell : Spell
 {
-    public Heal() : base()
+    public HealSpell(string name, int manaCost, int healAmount) : base(name, manaCost)
     {
-        Name = "Heal";
-        ManaCost = 3;
+        HealAmount = healAmount;
     }
+
+    public int HealAmount { get; private set; }
 
     public override bool Cast(Player player, Point targetPoint)
     {
         if (base.Cast(player, targetPoint))
         {
-            player.Heal(5);
+            List<GameObject> characters = new List<GameObject>(Map.Instance.MapObjectsByPosition[targetPoint.X, targetPoint.Y].Where(x => x is Character));
+            characters.ForEach(obj =>
+            {
+                if (obj is Character character)
+                {
+                    character.Heal(HealAmount);
+                    RootScreen.Instance.ShowMessage($"{player.Id} heals {character.Id} for {HealAmount} health!");
+                }
+            });
             return true;
         }
         return false;
@@ -62,17 +89,21 @@ public class Heal : Spell
 
 public class RevealSpell : Spell
 {
-    public RevealSpell() : base()
+    public RevealSpell(string name, int manaCost, int radius, int turns) : base(name, manaCost)
     {
-        Name = "Reveal";
-        ManaCost = 2;
+        Radius = radius;
+        Turns = turns;
     }
+
+    public int Radius { get; private set; }
+    public int Turns { get; private set; }
 
     public override bool Cast(Player player, Point targetPoint)
     {
         if (base.Cast(player, targetPoint))
         {
             // Reveal the map
+            RootScreen.Instance.RevealMap(targetPoint, Radius, Turns);
             RootScreen.Instance.ShowMessage($"{player.Id} reveals the map!");
             return true;
         }

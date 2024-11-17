@@ -22,6 +22,11 @@ class RootScreen : ScreenObject
     private List<string> _messages = new List<string>();
 
     private bool _showingUseInventory = false;
+    private bool _showingSpellMenu = false;
+    private Func<Player, Point, bool> _spellToCast;
+    private int _revealSpellActiveTurns;
+    private int _revealSpellActiveRadius;
+    private Point _revealSpellActivePosition;
 
     public RootScreen()
     {
@@ -47,6 +52,8 @@ class RootScreen : ScreenObject
 
         _targetingCursorScreen = new ScreenSurface(Game.Instance.ScreenCellsX, Game.Instance.ScreenCellsY);
         Children.Add(_targetingCursorScreen);
+
+        UpdateFieldOfView();
     }
 
     public static RootScreen Instance { get; set; }
@@ -55,6 +62,13 @@ class RootScreen : ScreenObject
     {
         _map.Tick();
         UpdateFieldOfView();
+
+        if (_revealSpellActiveTurns > 0)
+        {
+            _revealSpellActiveTurns--;
+            _revealSpellActiveRadius--;
+            RevealMap(_revealSpellActivePosition, _revealSpellActiveRadius, _revealSpellActiveTurns);
+        }
     }
 
     public override void Render(TimeSpan delta)
@@ -110,8 +124,6 @@ class RootScreen : ScreenObject
             if (index >= 0 && index < _messages.Count)
                 _statusBar.Print(1, 5 - i, _messages[index], messageColor, Color.Black);
         }
-
-        UpdateFieldOfView();
     }
 
     public override void Update(TimeSpan delta)
@@ -139,11 +151,100 @@ class RootScreen : ScreenObject
     {
         bool handled = false;
 
-        if (_targetingActive)
+        if (_showingSpellMenu)
         {
             if (keyboard.IsKeyPressed(Keys.Escape))
             {
-                HideTargeting();
+                _showingSpellMenu = false;
+                _inventoryScreen.Clear();
+            }
+            else if (keyboard.IsKeyPressed(Keys.D1))
+            {
+                if (Map.Instance.Player.Spells.Count > 0)
+                {
+                    _showingSpellMenu = false;
+                    _inventoryScreen.Clear();
+                    ShowLineOfSightTargeting(Map.Instance.Player.Spells[0].Cast);
+                }
+            }
+            else if (keyboard.IsKeyPressed(Keys.D2))
+            {
+                if (Map.Instance.Player.Spells.Count > 1)
+                {
+                    _showingSpellMenu = false;
+                    _inventoryScreen.Clear();
+                    ShowLineOfSightTargeting(Map.Instance.Player.Spells[1].Cast);
+                }
+            }
+            else if (keyboard.IsKeyPressed(Keys.D3))
+            {
+                if (Map.Instance.Player.Spells.Count > 2)
+                {
+                    _showingSpellMenu = false;
+                    _inventoryScreen.Clear();
+                    ShowLineOfSightTargeting(Map.Instance.Player.Spells[2].Cast);
+                }
+            }
+            else if (keyboard.IsKeyPressed(Keys.D4))
+            {
+                if (Map.Instance.Player.Spells.Count > 3)
+                {
+                    _showingSpellMenu = false;
+                    _inventoryScreen.Clear();
+                    ShowLineOfSightTargeting(Map.Instance.Player.Spells[3].Cast);
+                }
+            }
+            else if (keyboard.IsKeyPressed(Keys.D5))
+            {
+                if (Map.Instance.Player.Spells.Count > 4)
+                {
+                    _showingSpellMenu = false;
+                    _inventoryScreen.Clear();
+                    ShowLineOfSightTargeting(Map.Instance.Player.Spells[4].Cast);
+                }
+            }
+            else if (keyboard.IsKeyPressed(Keys.D6))
+            {
+                if (Map.Instance.Player.Spells.Count > 5)
+                {
+                    _showingSpellMenu = false;
+                    _inventoryScreen.Clear();
+                    ShowLineOfSightTargeting(Map.Instance.Player.Spells[5].Cast);
+                }
+            }
+            else if (keyboard.IsKeyPressed(Keys.D7))
+            {
+                if (Map.Instance.Player.Spells.Count > 6)
+                {
+                    _showingSpellMenu = false;
+                    _inventoryScreen.Clear();
+                    ShowLineOfSightTargeting(Map.Instance.Player.Spells[6].Cast);
+                }
+            }
+            else if (keyboard.IsKeyPressed(Keys.D8))
+            {
+                if (Map.Instance.Player.Spells.Count > 7)
+                {
+                    _showingSpellMenu = false;
+                    _inventoryScreen.Clear();
+                    ShowLineOfSightTargeting(Map.Instance.Player.Spells[7].Cast);
+                }
+            }
+            else if (keyboard.IsKeyPressed(Keys.D9))
+            {
+                if (Map.Instance.Player.Spells.Count > 8)
+                {
+                    _showingSpellMenu = false;
+                    _inventoryScreen.Clear();
+                    ShowLineOfSightTargeting(Map.Instance.Player.Spells[8].Cast);
+                }
+            }
+        }
+        else if (_targetingActive)
+        {
+            if (keyboard.IsKeyPressed(Keys.Escape))
+            {
+                HideLineOfSightTargeting();
             }
             else if (keyboard.IsKeyPressed(Keys.Up))
             {
@@ -207,7 +308,8 @@ class RootScreen : ScreenObject
             }
             else if (keyboard.IsKeyPressed(Keys.Enter))
             {
-                HideTargeting();
+                HideLineOfSightTargeting();
+                _spellToCast(Map.Instance.Player, _targetingCursorPosition);
                 handled = true;
             }
         }
@@ -358,7 +460,7 @@ class RootScreen : ScreenObject
             }
             else if (keyboard.IsKeyPressed(Keys.C))
             {
-                Map.Instance.Player.CastSpell(1);
+                Map.Instance.Player.StartCastingSpell();
             }
         }
 
@@ -395,12 +497,35 @@ class RootScreen : ScreenObject
         _inventoryScreen.Print(0, 1, inventory, Color.White, Color.Black);
     }
 
+    public void ShowSpellMenu()
+    {
+        if (Map.Instance.Player.Spells.Count == 0)
+        {
+            ShowMessage("You have no spells to cast.");
+            return;
+        }
+
+        _showingSpellMenu = true;
+        _inventoryScreen.Clear();
+
+        _inventoryScreen.Print(0, 0, "(Press number keys to choose spell, press esc to exit inventory)", Color.DarkOrange,
+            Color.Black);
+        string spellsString = "Spells: ";
+        for (int i = 0; i < Map.Instance.Player.Spells.Count; i++)
+        {
+            spellsString += $"{i + 1}: {Map.Instance.Player.Spells[i].Name} ({Map.Instance.Player.Spells[i].ManaCost}), ";
+        }
+
+        spellsString = spellsString.Substring(0, spellsString.Length - 2);
+        _inventoryScreen.Print(0, 1, spellsString, Color.White, Color.Black);
+    }
+
     public void ShowMessage(string message)
     {
         _messages.Add(message);
     }
 
-    public void ShowLineOfSightTargeting()
+    public void ShowLineOfSightTargeting(Func<Player, Point, bool> targetingAction)
     {
         _targetingActive = true;
         _targetingScreen.Clear();
@@ -408,6 +533,7 @@ class RootScreen : ScreenObject
         _targetingCursorScreen.Print(0, 0, "Targeting", Color.White, Color.Black);
         _targetingCursorScreen.Print(Map.Instance.Player.Position.X, Map.Instance.Player.Position.Y, "X", Color.Red);
         _targetingCursorPosition = Map.Instance.Player.Position;
+        _spellToCast = targetingAction;
 
         UpdateLineOfSightTargeting();
     }
@@ -456,11 +582,11 @@ class RootScreen : ScreenObject
         {
             Cell cell = (Cell)cellInterface;
             if (cell != null)
-                _fieldOfViewScreen.Print(cell.X, cell.Y, new ColoredString(" ", Color.Transparent, new Color(Color.Black, 0.1f)));
+                _fieldOfViewScreen.Print(cell.X, cell.Y, new ColoredString(" ", Color.Transparent, new Color(Color.Black, 0.0f)));
         }
     }
 
-    public void HideTargeting()
+    public void HideLineOfSightTargeting()
     {
         _targetingActive = false;
         _targetingScreen.Clear();
@@ -504,6 +630,28 @@ class RootScreen : ScreenObject
             {
                 _targetingScreen.Print(point.X, point.Y, new ColoredString("X", Color.Transparent, Color.Red));
             }
+        }
+    }
+
+    public void RevealMap(Point targetPoint, int radius, int turns)
+    {
+        _revealSpellActiveTurns = turns;
+        _revealSpellActiveRadius = radius;
+        _revealSpellActivePosition = targetPoint;
+        RogueSharp.FieldOfView fieldOfView = new RogueSharp.FieldOfView(Map.Instance.RogueSharpMap);
+        var fieldOfViewCells = fieldOfView.ComputeFov(targetPoint.X, targetPoint.Y, radius, true);
+        foreach (ICell cellInterface in fieldOfViewCells)
+        {
+            Cell cell = (Cell)cellInterface;
+            if (cell != null)
+                _fieldOfViewScreen.Print(cell.X, cell.Y, new ColoredString(" ", Color.Transparent, new Color(Color.Black, 0.5f)));
+        }
+        fieldOfViewCells = fieldOfView.ComputeFov(targetPoint.X, targetPoint.Y, radius / 2, true);
+        foreach (ICell cellInterface in fieldOfViewCells)
+        {
+            Cell cell = (Cell)cellInterface;
+            if (cell != null)
+                _fieldOfViewScreen.Print(cell.X, cell.Y, new ColoredString(" ", Color.Transparent, new Color(Color.Black, 0.0f)));
         }
     }
 }

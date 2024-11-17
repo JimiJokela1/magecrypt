@@ -1,4 +1,6 @@
-﻿namespace Magecrypt;
+﻿using System.Collections.Generic;
+
+namespace Magecrypt;
 
 public class Player : Character
 {
@@ -10,10 +12,18 @@ public class Player : Character
     {
         Mana = mana;
         MaxMana = maxMana;
+        Spells = new List<Spell>()
+        {
+            new Fireball("Fireball", 5, 50),
+            new Heal("Heal", 2, 25),
+            new RevealSpell("Reveal", 1, 12, 12),
+        };
     }
 
     public int Mana { get; set; }
     public int MaxMana { get; set; }
+
+    public List<Spell> Spells { get; set; } = new List<Spell>();
 
     public void ChangeMana(int amount)
     {
@@ -27,15 +37,16 @@ public class Player : Character
         return Mana >= amount;
     }
 
-    public void CastSpell(int manaCost)
+    public void StartCastingSpell()
     {
-        // Show line of sight targeting UI
-        RootScreen.Instance.ShowLineOfSightTargeting();
+        RootScreen.Instance.ShowSpellMenu();
+    }
 
+    public void CastSpell(Spell spell, Point targetPoint)
+    {
         // Cast spell
-        if (CanUseMana(manaCost))
+        if (spell.Cast(this, targetPoint)) 
         {
-            ChangeMana(-manaCost);
             RootScreen.Instance.ShowMessage($"{Id} casts a spell!");
         }
         else
