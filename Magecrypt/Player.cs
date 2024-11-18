@@ -14,8 +14,8 @@ public class Player : Character
         MaxMana = maxMana;
         Spells = new List<Spell>()
         {
-            new Fireball("Fireball", 5, 50),
-            new Heal("Heal", 2, 25),
+            new DirectDamageSpell("Fireball", 5, 50),
+            new HealSpell("Heal", 2, 25),
             new RevealSpell("Reveal", 1, 12, 12),
         };
     }
