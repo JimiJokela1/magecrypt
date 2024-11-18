@@ -111,6 +111,7 @@ public class Character : GameObject
         if (item.GoldItem)
         {
             Gold += item.GoldValue;
+            RootScreen.Instance.ShowMessage($"You picked up {item.GoldValue} gold.");
         }
         else
         {
@@ -121,6 +122,7 @@ public class Character : GameObject
             }
 
             Inventory.Add(item);
+            RootScreen.Instance.ShowMessage($"You picked up {item.Id}.");
         }
         
         item.PickUp();

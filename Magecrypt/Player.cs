@@ -42,22 +42,10 @@ public class Player : Character
         RootScreen.Instance.ShowSpellMenu();
     }
 
-    public void CastSpell(Spell spell, Point targetPoint)
-    {
-        // Cast spell
-        if (spell.Cast(this, targetPoint)) 
-        {
-            RootScreen.Instance.ShowMessage($"{Id} casts a spell!");
-        }
-        else
-        {
-            RootScreen.Instance.ShowMessage($"{Id} does not have enough mana to cast a spell!");
-        }
-    }
-
     public void PickUpMagicParticle(MagicParticle particle)
     {
         ChangeMana(particle.ManaValue);
+        RootScreen.Instance.ShowMessage($"{Id} picks up a magic particle and gains mana!");
         particle.PickUp();
     }
 }
