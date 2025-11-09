@@ -35,3 +35,26 @@ public class Item : GameObject
         Map.Instance.RemoveGameObject(this);
     }
 }
+
+public class ItemTemplate : Template
+{
+    public string Name { get; set; }
+    public ColoredGlyph Appearance { get; set; }
+    public int GoldValue { get; set; }
+    public bool Equippable { get; set; }
+    public bool Usable { get; set; }
+
+    public ItemTemplate(string name, ColoredGlyph appearance, int goldValue, bool equippable, bool usable, int minLevel, int maxLevel, float chanceWeight) : base(minLevel, maxLevel, chanceWeight)
+    {
+        Name = name;
+        Appearance = appearance;
+        GoldValue = goldValue;
+        Equippable = equippable;
+        Usable = usable;
+    }
+
+    public Item CreateItem(Point position, Map map)
+    {
+        return new Item(Name, Appearance, position, map, false, GoldValue, Equippable, Usable);
+    }
+}

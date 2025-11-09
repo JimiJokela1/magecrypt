@@ -13,3 +13,18 @@ public class Weapon : Item
 
     public int Attack { get; set; }
 }
+
+public class WeaponTemplate : ItemTemplate
+{
+    public int Attack { get; set; }
+
+    public WeaponTemplate(string name, ColoredGlyph appearance, int attack, int minLevel, int maxLevel, float chanceWeight) : base(name, appearance, 0, true, false, minLevel, maxLevel, chanceWeight)
+    {
+        Attack = attack;
+    }
+
+    public Weapon CreateWeapon(Point position, Map map)
+    {
+        return new Weapon(Name, Appearance, position, map, Attack);
+    }
+}

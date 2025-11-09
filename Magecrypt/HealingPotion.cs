@@ -22,3 +22,18 @@ public class HealingPotion : Item
         character.Inventory.Remove(this);
     }
 }
+
+public class HealingPotionTemplate : ItemTemplate
+{
+    private int _healAmount;
+
+    public HealingPotionTemplate(string name, ColoredGlyph appearance, int healAmount, int minLevel, int maxLevel, float chanceWeight) : base(name, appearance, 0, false, true, minLevel, maxLevel, chanceWeight)
+    {
+        _healAmount = healAmount;
+    }
+
+    public HealingPotion CreateHealingPotion(Point position, Map map)
+    {
+        return new HealingPotion(Name, _healAmount, position, map);
+    }
+}

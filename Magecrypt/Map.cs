@@ -18,6 +18,8 @@ public class Map
     private int _mapWidth;
     private int _mapHeight;
 
+    private int _currentLevel = 1;
+
     public IReadOnlyList<GameObject> GameObjects => _mapObjects.AsReadOnly();
 
     public ScreenSurface SurfaceObject => _mapSurface;
@@ -51,7 +53,7 @@ public class Map
         _mapObjectsTickIterationCopy = new List<GameObject>();
 
         new MapGenerator();
-        MapGenerator.Instance.GenerateMap(this, _mapObjects, _mapObjectsByPosition, _mapSurface, mapWidth, mapHeight);
+        MapGenerator.Instance.GenerateMap(_currentLevel, this, _mapObjects, _mapObjectsByPosition, _mapSurface, mapWidth, mapHeight);
 
         RogueSharpMap = new RogueSharp.Map(mapWidth, mapHeight);
 

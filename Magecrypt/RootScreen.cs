@@ -42,8 +42,8 @@ class RootScreen : ScreenObject
         _fieldOfViewScreen = new ScreenSurface(Game.Instance.ScreenCellsX, Game.Instance.ScreenCellsY);
         Children.Add(_fieldOfViewScreen);
 
-        _statusBar = new ScreenSurface(Game.Instance.ScreenCellsX, 10);
-        _statusBar.Position = new Point(0, Game.Instance.ScreenCellsY - 10);
+        _statusBar = new ScreenSurface(Game.Instance.ScreenCellsX, 11);
+        _statusBar.Position = new Point(0, Game.Instance.ScreenCellsY - 11);
         Children.Add(_statusBar);
 
         _inventoryScreen = new ScreenSurface(Game.Instance.ScreenCellsX - 10, Game.Instance.ScreenCellsY - 20);
@@ -110,11 +110,13 @@ class RootScreen : ScreenObject
             armorString += "None";
         }
 
-        _statusBar.Print(40, 8, armorString, Color.White, Color.Black);
         _statusBar.Print(40, 7, $"Health: {Map.Instance.Player.Health}", Color.White, Color.Black);
         _statusBar.Print(60, 7, $"Mana: {Map.Instance.Player.Mana}", Color.White, Color.Black);
         _statusBar.Print(80, 7, $"Attack: {Map.Instance.Player.AttackValue}", Color.White, Color.Black);
         _statusBar.Print(100, 7, $"Defense: {Map.Instance.Player.DefenseValue}", Color.White, Color.Black);
+        _statusBar.Print(40, 8, armorString, Color.White, Color.Black);
+
+        _statusBar.Print(1, 10, "[C]ast a spell");
 
         for (int i = 0; i < _messages.Count; i++)
         {

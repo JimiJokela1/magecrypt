@@ -27,3 +27,26 @@ public class Monster : Character
         }
     }
 }
+
+public class MonsterTemplate : Template
+{
+    public string Name { get; set; }
+    public ColoredGlyph Appearance { get; set; }
+    public int Health { get; set; }
+    public int Attack { get; set; }
+    public int Defense { get; set; }
+
+    public MonsterTemplate(string name, ColoredGlyph appearance, int health, int attack, int defense, int minLevel, int maxLevel, float chanceWeight) : base(minLevel, maxLevel, chanceWeight)
+    {
+        Name = name;
+        Appearance = appearance;
+        Health = health;
+        Attack = attack;
+        Defense = defense;
+    }
+
+    public Monster CreateMonster(Point position, Map map)
+    {
+        return new Monster(Name, Appearance, position, map, Health, Attack, Defense);
+    }
+}
