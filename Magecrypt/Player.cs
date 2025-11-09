@@ -4,10 +4,6 @@ namespace Magecrypt;
 
 public class Player : Character
 {
-    public Player(string id, ColoredGlyph appearance, Point position, Map map, bool blocksMovement = false) : base(id, appearance, position, map, blocksMovement)
-    {
-    }
-
     public Player(string id, ColoredGlyph appearance, Point position, Map map, int health, int mana, int maxMana, int attack, int defense, bool blocksMovement = true) : base(id, appearance, position, map, health, attack, defense, blocksMovement)
     {
         Mana = mana;
@@ -17,6 +13,7 @@ public class Player : Character
             new DirectDamageSpell("Fireball", 5, 50),
             new HealSpell("Heal", 2, 25),
             new RevealSpell("Reveal", 1, 12, 12),
+            new RevealSpell("Major Reveal", 0, 100, 100)
         };
     }
 

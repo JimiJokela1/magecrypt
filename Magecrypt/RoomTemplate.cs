@@ -23,7 +23,7 @@ public class RoomTemplate : Template
         Danger = danger;
     }
 
-    public Room CreateRoom(Point position, Map map, List<ItemTemplate> treasureTemplates, List<MonsterTemplate> monsterTemplates)
+    public Room CreateRoom(Point position, Map map, int level, List<ItemTemplate> treasureTemplates, List<MonsterTemplate> monsterTemplates)
     {
         Dictionary<Point, List<GameObject>> roomContents = new Dictionary<Point, List<GameObject>>();
         for (int y = 0; y < Layout.GetLength(1); y++)
@@ -55,8 +55,8 @@ public class RoomTemplate : Template
                     {
                         if (Game.Instance.Random.Next(0, 100) < 5)
                         {
-                            var treasure = treasureTemplates[Game.Instance.Random.Next(0, treasureTemplates.Count)]
-                                .CreateItem(position, map);
+                            var treasure = MapGenerator.ChooseRandom(treasureTemplates, level)
+                                .CreateItem(cellPosition, map);
                             map.AddGameObject(treasure);
                             roomContents[cellPosition].Add(treasure);
                         }
@@ -67,8 +67,8 @@ public class RoomTemplate : Template
                     {
                         if (Game.Instance.Random.Next(0, 100) < 3)
                         {
-                            var enemy = monsterTemplates[Game.Instance.Random.Next(0, monsterTemplates.Count)]
-                                .CreateMonster(position, map);
+                            var enemy = MapGenerator.ChooseRandom(monsterTemplates, level)
+                                .CreateMonster(cellPosition, map);
                             map.AddGameObject(enemy);
                             roomContents[cellPosition].Add(enemy);
                         }

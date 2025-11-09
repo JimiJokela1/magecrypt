@@ -117,7 +117,7 @@ public class MapGenerator
         }, 35, 46, 200, 50, 0, 10, 100)
     };
 
-    private T ChooseRandom<T>(List<T> templates, int level) where T : Template
+    public static T ChooseRandom<T>(List<T> templates, int level) where T : Template
     {
         List<T> validTemplates = templates.Where(t => t.MinLevel <= level && t.MaxLevel >= level).ToList();
         float totalWeight = validTemplates.Sum(t => t.ChanceWeight);
@@ -179,7 +179,7 @@ public class MapGenerator
         }
 
         // Create random rooms
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 100; i++)
         {
             //Rectangle room = GetRandomRoom(map.Width, map.Height, 3, 8, 3, 8);
             //List<GameObject> roomFloors = CreateRoom(map, room, true);
@@ -201,9 +201,7 @@ public class MapGenerator
 
             RoomTemplate roomTemplate = ChooseRandom(_randomRooms, level);
             Point randomPosition = new Point(Game.Instance.Random.Next(1, map.Width - roomTemplate.Layout.GetLength(0)), Game.Instance.Random.Next(1, map.Height - roomTemplate.Layout.GetLength(1)));
-            Room room = roomTemplate.CreateRoom(randomPosition, map, _randomTreasures, _randomMonsters);
-
-
+            Room room = roomTemplate.CreateRoom(randomPosition, map, level, _randomTreasures, _randomMonsters);
         }
 
         //// Create treasures
