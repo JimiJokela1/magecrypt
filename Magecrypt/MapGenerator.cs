@@ -56,7 +56,7 @@ public class MapGenerator
         new WeaponTemplate("Warhammer", new ColoredGlyph(Color.AnsiWhite, Color.Transparent, 'H'), 5, 7, 15, 0.25f),
     };
 
-    private List<ItemTemplate> _randomPotions = new List<ItemTemplate>()
+    private List<HealingPotionTemplate> _randomPotions = new List<HealingPotionTemplate>()
     {
         new HealingPotionTemplate("Minor Healing Potion", new ColoredGlyph(Color.AnsiRed, Color.Transparent, 'h'), 25, 1, 5, 1f),
         new HealingPotionTemplate("Lesser Healing Potion", new ColoredGlyph(Color.AnsiRed, Color.Transparent, 'H'), 50, 3, 8, 1f),
@@ -117,7 +117,7 @@ public class MapGenerator
         }, 35, 46, 200, 50, 0, 10, 100)
     };
 
-    private Template ChooseRandom<T>(List<T> templates, int level) where T : Template
+    private T ChooseRandom<T>(List<T> templates, int level) where T : Template
     {
         List<T> validTemplates = templates.Where(t => t.MinLevel <= level && t.MaxLevel >= level).ToList();
         float totalWeight = validTemplates.Sum(t => t.ChanceWeight);
@@ -199,7 +199,7 @@ public class MapGenerator
             //    }
             //}
 
-            RoomTemplate roomTemplate = (RoomTemplate)ChooseRandom(_randomRooms, level);
+            RoomTemplate roomTemplate = ChooseRandom(_randomRooms, level);
             Point randomPosition = new Point(Game.Instance.Random.Next(1, map.Width - roomTemplate.Layout.GetLength(0)), Game.Instance.Random.Next(1, map.Height - roomTemplate.Layout.GetLength(1)));
             Room room = roomTemplate.CreateRoom(randomPosition, map, _randomTreasures, _randomMonsters);
 
@@ -243,7 +243,7 @@ public class MapGenerator
 
     private void CreateHealingPotion(Map map, int level)
     {
-        HealingPotionTemplate healingPotionTemplate = (HealingPotionTemplate)ChooseRandom(_randomPotions, level);
+        HealingPotionTemplate healingPotionTemplate = ChooseRandom(_randomPotions, level);
         TryPlaceGameObjectInRandomPosition(healingPotionTemplate.CreateHealingPotion(Point.Zero, map), map);
     }
 
@@ -287,24 +287,24 @@ public class MapGenerator
 
     private void CreateMonster(Map map, int level)
     {
-        GameObject monster = ((MonsterTemplate)ChooseRandom(_randomMonsters, level)).CreateMonster(Point.Zero, map);
+        GameObject monster = ChooseRandom(_randomMonsters, level).CreateMonster(Point.Zero, map);
         TryPlaceGameObjectInRandomPosition(monster, map);
     }
 
     private void CreateTreasure(Map map, int level)
     {
-        GameObject treasure = ((ItemTemplate)ChooseRandom(_randomTreasures, level)).CreateItem(Point.Zero, map);
+        GameObject treasure = ChooseRandom(_randomTreasures, level).CreateItem(Point.Zero, map);
         TryPlaceGameObjectInRandomPosition(treasure, map);
     }
 
     private void CreateMagicParticle(Map map)
     {
-        TryPlaceGameObjectInRandomPosition(new MagicParticle(Point.Zero, map, manaValue: 1), map);
+        TryPlaceGameObjectInRandomPosition(new MagicParticle(Point.Zero, map, manaValue: Game.Instance.Random.Next(1, 3)), map);
     }
 
     private void CreateRandomArmor(Map map, int level)
     {
-        GameObject armor = ((ArmorTemplate)ChooseRandom(_randomArmor, level)).CreateArmor(Point.Zero, map);
+        GameObject armor = ChooseRandom(_randomArmor, level).CreateArmor(Point.Zero, map);
         TryPlaceGameObjectInRandomPosition(armor, map);
     }
 
