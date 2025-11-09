@@ -83,6 +83,40 @@ public class MapGenerator
         new MonsterTemplate("Cyclops", new ColoredGlyph(Color.Yellow, Color.Transparent, 'C'), 75, 30, 0, 10, 26, 0.1f),
     };
 
+    private List<RoomTemplate> _randomRooms = new List<RoomTemplate>()
+    {
+        new RoomTemplate(new string[5, 5]
+        {
+            { "W", "W", "F", "W", "W" },
+            { "W", "F", "F", "F", "W" },
+            { "F", "F", "W", "F", "F" },
+            { "W", "F", "F", "F", "W" },
+            { "W", "W", "F", "W", "W" },
+        }, 35, 46, 150, 50, 0, 10, 100),
+        new RoomTemplate(new string[7, 7]
+        {
+            { "W", "W", "W", "F", "W", "W", "W" },
+            { "W", "F", "F", "F", "F", "F", "W" },
+            { "W", "F", "W", "F", "W", "F", "W" },
+            { "F", "F", "F", "F", "F", "F", "F" },
+            { "W", "F", "W", "F", "W", "F", "W" },
+            { "W", "F", "F", "F", "F", "F", "W" },
+            { "W", "W", "W", "F", "W", "W", "W" },
+        }, 35, 46, 300, 75, 0, 10, 100),
+        new RoomTemplate(new string[9, 9]
+        {
+            { "W", "W", "W", "W", "F", "W", "W", "W", "W" },
+            { "W", "F", "F", "F", "F", "F", "F", "F", "W" },
+            { "F", "F", "F", "F", "F", "F", "F", "F", "F" },
+            { "W", "F", "F", "F", "F", "F", "F", "F", "W" },
+            { "W", "F", "F", "F", "F", "F", "F", "F", "W" },
+            { "W", "F", "F", "F", "F", "F", "F", "F", "W" },
+            { "F", "F", "F", "F", "F", "F", "F", "F", "F" },
+            { "W", "F", "F", "F", "F", "F", "F", "F", "W" },
+            { "W", "W", "W", "W", "F", "W", "W", "W", "W" },
+        }, 35, 46, 200, 50, 0, 10, 100)
+    };
+
     private Template ChooseRandom<T>(List<T> templates, int level) where T : Template
     {
         List<T> validTemplates = templates.Where(t => t.MinLevel <= level && t.MaxLevel >= level).ToList();
@@ -147,23 +181,29 @@ public class MapGenerator
         // Create random rooms
         for (int i = 0; i < 50; i++)
         {
-            Rectangle room = GetRandomRoom(map.Width, map.Height, 3, 8, 3, 8);
-            List<GameObject> roomFloors = CreateRoom(map, room, true);
+            //Rectangle room = GetRandomRoom(map.Width, map.Height, 3, 8, 3, 8);
+            //List<GameObject> roomFloors = CreateRoom(map, room, true);
 
-            // Distribute loot based on the room profile
-            foreach (GameObject floor in roomFloors)
-            {
-                // 10% chance to place a treasure
-                if (Game.Instance.Random.Next(0, 100) < 10)
-                {
-                    CreateTreasure(map, level);
-                }
-                // 10% chance to place a monster
-                if (Game.Instance.Random.Next(0, 100) < 10)
-                {
-                    CreateMonster(map, level);
-                }
-            }
+            //// Distribute loot based on the room profile
+            //foreach (GameObject floor in roomFloors)
+            //{
+            //    // 10% chance to place a treasure
+            //    if (Game.Instance.Random.Next(0, 100) < 10)
+            //    {
+            //        CreateTreasure(map, level);
+            //    }
+            //    // 10% chance to place a monster
+            //    if (Game.Instance.Random.Next(0, 100) < 10)
+            //    {
+            //        CreateMonster(map, level);
+            //    }
+            //}
+
+            RoomTemplate roomTemplate = (RoomTemplate)ChooseRandom(_randomRooms, level);
+            Point randomPosition = new Point(Game.Instance.Random.Next(1, map.Width - roomTemplate.Layout.GetLength(0)), Game.Instance.Random.Next(1, map.Height - roomTemplate.Layout.GetLength(1)));
+            Room room = roomTemplate.CreateRoom(randomPosition, map, _randomTreasures, _randomMonsters);
+
+
         }
 
         //// Create treasures

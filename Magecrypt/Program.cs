@@ -4,7 +4,7 @@ using SadConsole.Configuration;
 Settings.WindowTitle = "Magecrypt";
 
 Builder configuration = new Builder()
-        .SetScreenSize(240, 72)
+        .SetScreenSize(280, 88)
         .SetStartingScreen<RootScreen>()
         .IsStartingScreenFocused(true)
     ;
