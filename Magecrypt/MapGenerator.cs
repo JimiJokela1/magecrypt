@@ -76,11 +76,11 @@ public class MapGenerator
 
     private List<MonsterTemplate> _randomMonsters = new List<MonsterTemplate>()
     {
-        new MonsterTemplate("Goblin", new ColoredGlyph(Color.GreenYellow, Color.Transparent, 'G'), 15,10, 0, 0, 15, 2f),
-        new MonsterTemplate("Orc", new ColoredGlyph(Color.DarkGreen, Color.Transparent, 'O'), 25, 15, 1, 3, 26, 1f),
-        new MonsterTemplate("Troll", new ColoredGlyph(Color.DarkOliveGreen, Color.Transparent, 'T'), 60, 40, 0, 5, 26, 0.2f),
-        new MonsterTemplate("Ogre", new ColoredGlyph(Color.Orange, Color.Transparent, 'O'), 60, 25, 3, 7, 26, 0.2f),
-        new MonsterTemplate("Cyclops", new ColoredGlyph(Color.Yellow, Color.Transparent, 'C'), 75, 30, 0, 10, 26, 0.1f),
+        new MonsterTemplate("Goblin", new ColoredGlyph(Color.GreenYellow, Color.Transparent, 'G'), 15,10, 0, 10, 0, 15, 2f),
+        new MonsterTemplate("Orc", new ColoredGlyph(Color.DarkGreen, Color.Transparent, 'O'), 25, 15, 1, 20, 3, 26, 1f),
+        new MonsterTemplate("Troll", new ColoredGlyph(Color.DarkOliveGreen, Color.Transparent, 'T'), 60, 40, 0, 30, 5, 26, 0.2f),
+        new MonsterTemplate("Ogre", new ColoredGlyph(Color.Orange, Color.Transparent, 'O'), 60, 25, 3, 40, 7, 26, 0.2f),
+        new MonsterTemplate("Cyclops", new ColoredGlyph(Color.Yellow, Color.Transparent, 'C'), 75, 30, 0, 50, 10, 26, 0.1f),
     };
 
     private static List<RoomTemplate> _randomRooms = new List<RoomTemplate>()
@@ -92,7 +92,7 @@ public class MapGenerator
             { "F", "F", "W", "F", "F" },
             { "W", "F", "F", "F", "W" },
             { "W", "W", "F", "W", "W" },
-        }, 35, 46, 150, 50, 0, 10, 100),
+        }, 35, 46, 150, 10, 0, 10, 100),
         new RoomTemplate(new string[7, 7]
         {
             { "W", "W", "W", "F", "W", "W", "W" },
@@ -102,7 +102,7 @@ public class MapGenerator
             { "W", "F", "W", "F", "W", "F", "W" },
             { "W", "F", "F", "F", "F", "F", "W" },
             { "W", "W", "W", "F", "W", "W", "W" },
-        }, 35, 46, 300, 75, 0, 10, 100),
+        }, 35, 46, 300, 30, 0, 10, 100),
         new RoomTemplate(new string[9, 9]
         {
             { "W", "W", "W", "W", "F", "W", "W", "W", "W" },
@@ -140,8 +140,8 @@ public class MapGenerator
                 _randomRooms[2],
                 _randomRooms[3]
             ],
-            minRooms: 300,
-            maxRooms: 300)
+            minRooms: 10,
+            maxRooms: 10)
     };
 
     public static T ChooseRandom<T>(List<T> templates, int level) where T : Template

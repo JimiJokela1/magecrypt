@@ -35,14 +35,16 @@ public class MonsterTemplate : Template
     public int Health { get; set; }
     public int Attack { get; set; }
     public int Defense { get; set; }
+    public int Danger { get; set; }
 
-    public MonsterTemplate(string name, ColoredGlyph appearance, int health, int attack, int defense, int minLevel, int maxLevel, float chanceWeight) : base(minLevel, maxLevel, chanceWeight)
+    public MonsterTemplate(string name, ColoredGlyph appearance, int health, int attack, int defense, int danger, int minLevel, int maxLevel, float chanceWeight) : base(minLevel, maxLevel, chanceWeight)
     {
         Name = name;
         Appearance = appearance;
         Health = health;
         Attack = attack;
         Defense = defense;
+        Danger = danger;
     }
 
     public Monster CreateMonster(Point position, Map map)

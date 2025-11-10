@@ -49,33 +49,32 @@ public class RoomTemplate : Template
                         roomContents.Add(cellPosition, new List<GameObject>() { floor });
                     else
                         roomContents[cellPosition].Add(floor);
-
-                    // Treasure
-                    if (TreasureWorth > 0)
-                    {
-                        if (Game.Instance.Random.Next(0, 100) < 5)
-                        {
-                            var treasure = MapGenerator.ChooseRandom(treasureTemplates, level)
-                                .CreateItem(cellPosition, map);
-                            map.AddGameObject(treasure);
-                            roomContents[cellPosition].Add(treasure);
-                        }
-                    }
-
-                    // Monsters
-                    if (Danger > 0)
-                    {
-                        if (Game.Instance.Random.Next(0, 100) < 3)
-                        {
-                            var enemy = MapGenerator.ChooseRandom(monsterTemplates, level)
-                                .CreateMonster(cellPosition, map);
-                            map.AddGameObject(enemy);
-                            roomContents[cellPosition].Add(enemy);
-                        }
-                    }
                 }
-                // Add more cell types as needed
             }
+        }
+
+        // Treasure
+        int remainingTreasureWorth = TreasureWorth;
+        while (remainingTreasureWorth > 0)
+        {
+            var cellPosition = roomContents.Keys.Where(p => Layout[p.X - position.X, p.Y - position.Y] == "F").OrderBy(_ => Game.Instance.Random.Next()).First();
+            var treasureTemplate = MapGenerator.ChooseRandom(treasureTemplates, level);
+            var treasure = treasureTemplate.CreateItem(cellPosition, map);
+            map.AddGameObject(treasure);
+            roomContents[cellPosition].Add(treasure);
+            remainingTreasureWorth -= treasureTemplate.GoldValue;
+        }
+
+        // Monsters
+        int remainingDanger = Danger;
+        while (remainingDanger > 0)
+        {
+            var cellPosition = roomContents.Keys.Where(p => Layout[p.X - position.X, p.Y - position.Y] == "F").OrderBy(_ => Game.Instance.Random.Next()).First();
+            var enemyTemplate = MapGenerator.ChooseRandom(monsterTemplates, level);
+            var enemy = enemyTemplate.CreateMonster(cellPosition, map);
+            map.AddGameObject(enemy);
+            roomContents[cellPosition].Add(enemy);
+            remainingDanger -= enemyTemplate.Danger;
         }
 
         return new Room(roomContents);
