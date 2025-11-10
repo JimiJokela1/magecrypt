@@ -83,7 +83,7 @@ public class MapGenerator
         new MonsterTemplate("Cyclops", new ColoredGlyph(Color.Yellow, Color.Transparent, 'C'), 75, 30, 0, 10, 26, 0.1f),
     };
 
-    private List<RoomTemplate> _randomRooms = new List<RoomTemplate>()
+    private static List<RoomTemplate> _randomRooms = new List<RoomTemplate>()
     {
         new RoomTemplate(new string[5, 5]
         {
@@ -114,7 +114,34 @@ public class MapGenerator
             { "F", "F", "F", "F", "F", "F", "F", "F", "F" },
             { "W", "F", "F", "F", "F", "F", "F", "F", "W" },
             { "W", "W", "W", "W", "F", "W", "W", "W", "W" },
-        }, 35, 46, 200, 50, 0, 10, 100)
+        }, 35, 46, 200, 50, 0, 10, 100),
+        new RoomTemplate(new string[9,9]
+        {
+            { "F", "F", "F", "W", "F", "W", "F", "F", "F" },
+            { "F", "F", "W", "F", "F", "F", "W", "F", "F" },
+            { "F", "W", "F", "F", "F", "F", "F", "W", "F" },
+            { "W", "F", "F", "F", "F", "F", "F", "F", "W" },
+            { "F", "F", "F", "F", "F", "F", "F", "F", "F" },
+            { "W", "F", "F", "F", "F", "F", "F", "F", "W" },
+            { "F", "W", "F", "F", "F", "F", "F", "W", "F" },
+            { "F", "F", "W", "F", "F", "F", "W", "F", "F" },
+            { "F", "F", "F", "W", "F", "W", "F", "F", "F" },
+        }, 35, 46, 100, 20, 0, 10, 100)
+    };
+
+    private static List<LevelTemplate> _levelTemplates = new List<LevelTemplate>()
+    {
+        new LevelTemplate(
+            levelName: "The Oblique",
+            level: 1,
+            [
+                _randomRooms[0],
+                _randomRooms[1],
+                _randomRooms[2],
+                _randomRooms[3]
+            ],
+            minRooms: 300,
+            maxRooms: 300)
     };
 
     public static T ChooseRandom<T>(List<T> templates, int level) where T : Template
@@ -179,7 +206,8 @@ public class MapGenerator
         }
 
         // Create random rooms
-        for (int i = 0; i < 100; i++)
+        int roomCount = Game.Instance.Random.Next(_levelTemplates[level - 1].MinRooms, _levelTemplates[level - 1].MaxRooms + 1);
+        for (int i = 0; i < roomCount; i++)
         {
             //Rectangle room = GetRandomRoom(map.Width, map.Height, 3, 8, 3, 8);
             //List<GameObject> roomFloors = CreateRoom(map, room, true);
@@ -199,7 +227,7 @@ public class MapGenerator
             //    }
             //}
 
-            RoomTemplate roomTemplate = ChooseRandom(_randomRooms, level);
+            RoomTemplate roomTemplate = ChooseRandom(_levelTemplates[level - 1].RoomTemplates, level);
             Point randomPosition = new Point(Game.Instance.Random.Next(1, map.Width - roomTemplate.Layout.GetLength(0)), Game.Instance.Random.Next(1, map.Height - roomTemplate.Layout.GetLength(1)));
             Room room = roomTemplate.CreateRoom(randomPosition, map, level, _randomTreasures, _randomMonsters);
         }
